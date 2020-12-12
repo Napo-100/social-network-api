@@ -1,4 +1,5 @@
 const { User } = require("../models");
+const { populate } = require("../models/User");
 
 const userController = {
   getAllUsers(req, res) {
@@ -20,7 +21,6 @@ const userController = {
       })
       .select("-__v")
       .then((dbUserData) => {
-        // If no pizza is found, send 404
         if (!dbUserData) {
           res.status(404).json({ message: "No user found with this id!" });
           return;
@@ -34,8 +34,8 @@ const userController = {
   },
 
   // create user
-  createUser({ body }, res) {
-    User.create(body)
+  createUser(req, res) {
+    User.create(req.body)
       .then((dbUserData) => res.json(dbUserData))
       .catch((err) => res.status(400).json(err));
   },
@@ -51,17 +51,20 @@ const userController = {
           res.status(404).json({ message: "No user found with this id!" });
           return;
         }
-        res.json(dbPizzaData);
+        res.json(dbUserData);
       })
-      .catch((err) => res.status(400).json(err));
+      .catch((err) => {
+        console.log(err);
+        res.status(400).json(err);
+      });
   },
 
   // delete User
   deleteUser(req, res) {
     User.findOneAndDelete({ _id: req.params.id })
-      .remove({
-        path: "thoughts",
-      })
+      // .remove({
+      //   path: "thoughts",
+      // })
       .then((dbUserData) => {
         if (!dbUserData) {
           res.status(404).json({ message: "No user found with this id!" });
