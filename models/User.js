@@ -2,7 +2,7 @@ const { Schema, model } = require("mongoose");
 
 const UserSchema = new Schema(
   {
-    userName: {
+    username: {
       type: String,
       required: "You must provide a username!",
       unique: true,
@@ -20,7 +20,7 @@ const UserSchema = new Schema(
         ref: "Thought",
       },
     ],
-    freinds: [
+    friends: [
       {
         type: Schema.Types.ObjectId,
         ref: "User",
