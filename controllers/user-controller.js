@@ -1,5 +1,7 @@
 const { User } = require("../models");
+const Thought = require("../models/Thought");
 const { populate } = require("../models/User");
+const thoughtController = require("./thought-controller");
 
 const userController = {
   getAllUsers(req, res) {
@@ -61,10 +63,13 @@ const userController = {
 
   // delete User
   deleteUser(req, res) {
+    User.findOne({ _id: req.params.id }).then((data) => {
+      console.log(data.thoughts);
+      data.thoughts.forEach(async (item) => {
+        await Thought.findOneAndDelete({ _id: item });
+      });
+    });
     User.findOneAndDelete({ _id: req.params.id })
-      // .remove({
-      //   path: "thoughts",
-      // })
       .then((dbUserData) => {
         if (!dbUserData) {
           res.status(404).json({ message: "No user found with this id!" });
